@@ -38,8 +38,17 @@ pub fn process_dir<P:AsRef<Path>>(session: Rc<Session>, root_dir: P) -> io::Resu
 
 pub fn process_file<P:AsRef<Path>>(session: Rc<Session>, lalrpop_file: P) -> io::Result<()> {
     let lalrpop_file = lalrpop_file.as_ref();
-    let rs_file = try!(resolve_rs_file(&session, lalrpop_file));
-    process_file_into(session, lalrpop_file, &rs_file)
+
+    if session.compute_firsts.is_empty() {
+        let rs_file = try!(resolve_rs_file(&session, lalrpop_file));
+        process_file_into(session, lalrpop_file, &rs_file)
+    } else {
+        let file_text = Rc::new(try!(FileText::from_path(lalrpop_file.to_path_buf())));
+        let _tls = Tls::install(session.clone(), file_text.clone());
+        let grammar = try!(parse_and_normalize_grammar(&session, &file_text));
+        ::grammar::firsts::compute(&grammar, &session.compute_firsts);
+        Ok(())
+    }
 }
 
 fn resolve_rs_file(session: &Session, lalrpop_file: &Path) -> io::Result<PathBuf> {

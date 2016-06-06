@@ -46,6 +46,10 @@ fn main1() -> io::Result<()> {
         process::exit(1);
     }
 
+    if let Some(nts) = args.flag_firsts {
+        config.compute_firsts(nts);
+    }
+
     for arg in args.arg_inputs {
         match config.process_file(&arg) {
             Ok(()) => { }
@@ -69,6 +73,7 @@ Options:
                          Valid values: quiet, info, verbose, debug.
     -f, --force          Force execution, even if the .lalrpop file is older than the .rs file.
     -c, --color          Force colorful output, even if this is not a TTY.
+    --firsts NTS         Compute the FIRST sets for the given non-terminals (comma-separated list).
     --comments           Enable comments in the generated code.
 ";
 
@@ -79,6 +84,7 @@ struct Args {
     flag_force: bool,
     flag_color: bool,
     flag_comments: bool,
+    flag_firsts: Option<String>
 }
 
 #[derive(Debug, RustcDecodable)]

@@ -31,6 +31,7 @@ pub struct Session {
     pub log: Log,
 
     pub force_build: bool,
+    pub compute_firsts: Vec<String>,
 
     pub in_dir: Option<path::PathBuf>,
 
@@ -82,6 +83,7 @@ impl Session {
             in_dir: None,
             out_dir: None,
             force_build: false,
+            compute_firsts: vec![],
             emit_comments: false,
             color_config: ColorConfig::default(),
             max_errors: 1,

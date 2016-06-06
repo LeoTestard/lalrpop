@@ -83,6 +83,12 @@ impl Configuration {
         self
     }
 
+    pub fn compute_firsts(&mut self, val: String) -> &mut Configuration {
+        let nts = val.split(',').map(|s| s.to_string()).collect();
+        self.session.compute_firsts = nts;
+        self
+    }
+
     /// Minimal logs: only for errors that halt progress.
     pub fn log_quiet(&mut self) -> &mut Configuration {
         self.session.log.set_level(Level::Taciturn);
